@@ -1,0 +1,38 @@
+{
+  "title": "Elehant Meters",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Select a meter",
+        "description": "Select a meter from the list below.",
+        "data": {
+          "address": "Discovered meters:"
+        }
+      },
+      "bluetooth_confirm": {
+        "title": "Confirm",
+        "description": "Confirm creation of device config entry."
+      }
+    },
+    "abort": {
+      "not_supported": "Device not supported.",
+      "already_in_progress": "Device setup wizard is already running.",
+      "already_configured": "The device is already configured.",
+      "no_devices_found": "No devices found to setup."
+    }
+  },
+  "device": {
+    "1": {
+      "name": "Gas meter"
+    },
+    "2": {
+      "name": "Water meter"
+    },
+    "3": {
+      "name": "Electricity meter"
+    },
+    "4": {
+      "name": "Heat meter"
+    }
+  }
+}

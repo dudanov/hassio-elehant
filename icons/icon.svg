@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 67.733338 67.733334"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="256.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.0449705"
+     inkscape:cx="-35.886179"
+     inkscape:cy="120.09908"
+     inkscape:window-width="3440"
+     inkscape:window-height="1369"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Слой 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-114.51032,-116.9069)">
+    <g
+       id="g10"
+       transform="matrix(1.7108688,0,0,1.7108688,112.79951,119.11163)">
+      <path
+         class="st1"
+         d="m 40.58,18.54 c 0,5.03 0,10.05 0,15.08 0,1.7 -0.94,2.96 -2.47,3.3 -0.17,0.04 -0.35,0.06 -0.53,0.06 -3.55,0 -7.1,0.05 -10.64,-0.03 -1.75,-0.04 -2.78,-1.55 -2.91,-2.76 -0.19,-1.8 1.2,-3.45 3.24,-3.46 1.02,0 2.04,-0.03 3.06,0.01 1.37,0.04 3.05,-1.06 3.05,-3.04 0.01,-6.1 0,-12.2 0.01,-18.3 0,-1.51 -1.11,-3.06 -3.15,-3.12 -1.05,-0.03 -2.1,0 -3.15,-0.01 -1.38,-0.01 -2.79,-1.03 -3.04,-2.62 -0.24,-1.52 0.66,-3 2.11,-3.46 0.33,-0.11 0.68,-0.16 1.03,-0.16 3.36,0 6.71,0.04 10.07,-0.01 1.67,-0.02 3.33,1.14 3.33,3.32 -0.01,5.06 -0.01,10.13 -0.01,15.2 z"
+         id="path8"
+         style="fill:#eb5c2e" />
+      <path
+         class="st1"
+         d="m 20.8,24.53 c -1.24,0 -2.48,-0.04 -3.72,0.01 -1.45,0.06 -2.68,-1.42 -2.64,-2.61 0.07,-2.26 0.05,-4.52 0.01,-6.78 -0.03,-1.28 1.03,-2.67 2.64,-2.68 2.48,-0.02 4.96,-0.02 7.44,0 1.28,0.01 2.57,0.89 2.61,2.61 0.04,2.33 0.05,4.67 -0.01,7 -0.04,1.52 -1.35,2.46 -2.56,2.45 -1.26,0 -2.52,0 -3.77,0 z"
+         id="path9"
+         style="fill:#eb5c2e" />
+      <path
+         class="st1"
+         d="m 1.01,18.49 c 0,-5.03 0,-10.05 0,-15.08 C 1.01,2.8 1.07,2.21 1.38,1.67 1.98,0.62 2.88,0.02 4.11,0.01 7.57,0 11.03,0 14.49,0.01 c 1.74,0 3.16,1.47 3.08,3.19 -0.1,2.03 -1.67,3.07 -3.16,3.06 -0.98,-0.01 -1.95,0 -2.93,0 -1.96,0.01 -3.27,1.32 -3.27,3.26 0,6 0.01,11.99 -0.01,17.99 0,1.46 0.67,2.45 1.98,3.04 0.32,0.14 0.68,0.17 1.03,0.17 1.03,0 2.07,-0.01 3.1,0 1.11,0.02 2.07,0.41 2.68,1.36 1.23,1.88 0.36,4.12 -1.77,4.79 -0.34,0.11 -0.69,0.12 -1.04,0.12 -3.3,0 -6.59,-0.04 -9.89,0.02 C 2.44,37.03 0.99,35.55 1,33.7 1.03,28.63 1.01,23.56 1.01,18.49 Z"
+         id="path10"
+         style="fill:#eb5c2e" />
+    </g>
+  </g>
+</svg>
