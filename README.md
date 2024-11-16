@@ -1,6 +1,6 @@
 # Elehant Meters
 
-[Home Assistant](https://www.home-assistant.io/) [HACS](https://hacs.xyz/) custom component for working with [Elephant meters](https://elehant.ru/) with a Bluetooth interface.
+[Home Assistant](https://www.home-assistant.io/) [HACS](https://hacs.xyz/) custom component for working with [Elehant meters](https://elehant.ru/) with a Bluetooth interface.
 
 ## Installation
 
