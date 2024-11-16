@@ -13,6 +13,7 @@ from homeassistant.components.bluetooth.passive_update_processor import (
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.components.sensor.const import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
+    PERCENTAGE,
     SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
     EntityCategory,
     UnitOfEnergy,
@@ -39,6 +40,7 @@ _COMMON_SENSORS = [
     SensorEntityDescription(
         key="battery",
         device_class=SensorDeviceClass.BATTERY,
+        native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
