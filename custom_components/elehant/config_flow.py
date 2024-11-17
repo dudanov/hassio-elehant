@@ -40,6 +40,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="not_supported")
 
         await self.async_set_unique_id(info.address)
+        self._abort_if_unique_id_configured()
         self._discovered_device = device
 
         return await self.async_step_bluetooth_confirm()
