@@ -2,6 +2,7 @@ import logging
 
 from homeassistant.components.bluetooth import (
     BluetoothScanningMode,
+    BluetoothServiceInfoBleak,
     async_rediscover_address,
 )
 from homeassistant.components.bluetooth.passive_update_processor import (
@@ -11,13 +12,16 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
+from .db_names import TranslatedNames, get_translated_names
 from .elehant import ElehantData
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 _LOGGER = logging.getLogger(__name__)
 
-type ElehantConfigEntry = ConfigEntry[PassiveBluetoothProcessorCoordinator[ElehantData]]
+type ElehantConfigEntry = ConfigEntry[
+    PassiveBluetoothProcessorCoordinator[tuple[ElehantData, TranslatedNames]]
+]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ElehantConfigEntry) -> bool:
@@ -25,12 +29,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ElehantConfigEntry) -> b
 
     assert (address := entry.unique_id)
 
+    def _update(info: BluetoothServiceInfoBleak):
+        data = ElehantData.from_ble(info.device, info.advertisement)
+        i18n = get_translated_names(hass, data)
+
+        return data, i18n
+
     entry.runtime_data = PassiveBluetoothProcessorCoordinator(
         hass,
         _LOGGER,
         address=address,
         mode=BluetoothScanningMode.PASSIVE,
-        update_method=lambda x: ElehantData.from_ble(x.device, x.advertisement),
+        update_method=_update,
     )
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

@@ -13,8 +13,8 @@ from homeassistant.const import CONF_UNIQUE_ID
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN
+from .db_names import get_translated_names
 from .elehant import ElehantData, ElehantError
-from .helpers import get_device_name
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,10 +52,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         assert (device := self._discovered_device)
 
         if user_input is not None:
-            return self.async_create_entry(title=self._name, data={})
+            return self.async_create_entry(title=self._i18n.name, data={})
 
-        self._name = await get_device_name(self.hass, device)
-        self.context["title_placeholders"] = {"name": self._name}
+        self._i18n = get_translated_names(self.hass, device)
+        self.context["title_placeholders"] = {"name": self._i18n.name}
         self._set_confirm_only()
 
         return self.async_show_form(step_id="bluetooth_confirm")
@@ -72,7 +72,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._abort_if_unique_id_configured()
 
             return self.async_create_entry(
-                title=await get_device_name(self.hass, device), data={}
+                title=get_translated_names(self.hass, device).name, data={}
             )
 
         current_ids = self._async_current_ids()
@@ -98,7 +98,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(CONF_UNIQUE_ID): vol.In(
                         {
-                            k: await get_device_name(self.hass, v)
+                            k: get_translated_names(self.hass, v).name
                             for k, v in self._discovered_devices.items()
                         }
                     )
