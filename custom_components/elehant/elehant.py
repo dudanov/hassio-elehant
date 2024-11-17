@@ -1,4 +1,5 @@
 import dataclasses as dc
+import datetime as dt
 
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
@@ -113,3 +114,8 @@ class ElehantData:
     def unique_id(self) -> str:
         """Уникальный идентификатор"""
         return f"{self.key_model}-{self.str_serial}"
+
+    @property
+    def last_report(self) -> dt.datetime:
+        """Возвращает текущий штамп времени"""
+        return dt.datetime.now(dt.UTC)

@@ -19,5 +19,12 @@
       "already_configured": "The device is already configured.",
       "no_devices_found": "No devices found to setup."
     }
- }
+  },
+  "entity": {
+    "sensor": {
+      "last_report": {
+        "name": "Last report"
+      }
+    }
+  }
 }
