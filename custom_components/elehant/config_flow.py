@@ -51,10 +51,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         assert (device := self._discovered_device)
 
         if user_input is not None:
-            return self.async_create_entry(title=device.unique_id, data={})
+            return self.async_create_entry(title=self._name, data={})
 
-        name = await get_device_name(self.hass, device)
-        self.context["title_placeholders"] = {"name": name}
+        self._name = await get_device_name(self.hass, device)
+        self.context["title_placeholders"] = {"name": self._name}
         self._set_confirm_only()
 
         return self.async_show_form(step_id="bluetooth_confirm")
@@ -70,7 +70,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             await self.async_set_unique_id(device.address, raise_on_progress=False)
             self._abort_if_unique_id_configured()
 
-            return self.async_create_entry(title=device.unique_id, data={})
+            return self.async_create_entry(
+                title=await get_device_name(self.hass, device), data={}
+            )
 
         current_ids = self._async_current_ids()
 
