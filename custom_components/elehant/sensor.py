@@ -41,6 +41,7 @@ _COMMON_SENSORS = [
     SensorEntityDescription(
         device_class=SensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
+        icon="mdi:battery-bluetooth-variant",
         key="battery",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -48,6 +49,7 @@ _COMMON_SENSORS = [
     SensorEntityDescription(
         device_class=SensorDeviceClass.SIGNAL_STRENGTH,
         entity_category=EntityCategory.DIAGNOSTIC,
+        icon="mdi:bluetooth",
         key="rssi",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         state_class=SensorStateClass.MEASUREMENT,
