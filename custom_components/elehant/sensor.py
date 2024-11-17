@@ -96,11 +96,12 @@ def sensor_update_to_bluetooth_data_update(
         connections={(dr.CONNECTION_BLUETOOTH, data.address)},
         identifiers={(DOMAIN, data.unique_id)},
         manufacturer="Элехант",
-        model_id=data.key_model,
+        # model_id=data.key_model,
         # model=data.name_model,
         serial_number=data.str_serial,
-        sw_version=data.firmware,
-        translation_key=data.key_type,
+        sw_version=data.sw_version,
+        translation_key=data.key_model,
+        translation_placeholders={"serial": data.str_serial},
     )
 
     result = PassiveBluetoothDataUpdate(

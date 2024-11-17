@@ -29,20 +29,20 @@ class ElehantData:
 
     _: dc.KW_ONLY
 
-    firmware: str
-    """Версия ПО"""
+    sw_version: str
+    """Версия прошивки"""
     battery: int
-    """Состояние батареи"""
+    """Уровень заряда батареи"""
     temperature: float
     """Температура среды"""
     value_1: float
-    """Показания 1"""
+    """Показание 1"""
     value_2: float | None = None
-    """Показания 2"""
+    """Показание 2"""
     address: str
     """Адрес"""
     rssi: int
-    """RSSI"""
+    """Уровень сигнала RSSI"""
 
     @classmethod
     def from_ble(cls, dev: BLEDevice, adv: AdvertisementData):
@@ -62,12 +62,12 @@ class ElehantData:
                 "Device signatures in address and adverisement data aren't equals."
             )
 
-        fw, packet = "{}.{}".format(*divmod(x[16], 10)), x[3]
+        sw_version, packet_version = "{}.{}".format(*divmod(x[16], 10)), x[3]
 
-        if packet == 0x01:
+        if packet_version == 0x01:
             return cls(
                 *sign,
-                firmware=fw,
+                sw_version=sw_version,
                 battery=min(x[13], 100),
                 temperature=int.from_bytes(x[14:16], "little") / 1e2,
                 value_1=int.from_bytes(x[9:13], "little") / 1e4,
@@ -75,14 +75,15 @@ class ElehantData:
                 rssi=adv.rssi,
             )
 
-        if packet == 0x05:
+        if packet_version == 0x05:
+            # Значения показаний 28-битные
             v1, v2 = map(lambda x: x << 24, divmod(x[9], 16))
             v1 += int.from_bytes(x[10:13], "big")
             v2 += int.from_bytes(x[13:16], "big")
 
             return cls(
                 *sign,
-                firmware=fw,
+                sw_version=sw_version,
                 battery=min(x[1], 100),
                 temperature=x[2],
                 value_1=v1 / 1e3,
@@ -91,7 +92,7 @@ class ElehantData:
                 rssi=adv.rssi,
             )
 
-        raise UnsupportedPacket("Packet version %d is not supported.", packet)
+        raise UnsupportedPacket("Packet version %d is not supported.", packet_version)
 
     @property
     def key_type(self) -> str:
