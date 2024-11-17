@@ -12,7 +12,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-from .db_names import TranslatedNames, get_translated_names
+from .db_names import ElehantNames, get_translated_names
 from .elehant import ElehantData
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
@@ -20,7 +20,7 @@ PLATFORMS: list[Platform] = [Platform.SENSOR]
 _LOGGER = logging.getLogger(__name__)
 
 type ElehantConfigEntry = ConfigEntry[
-    PassiveBluetoothProcessorCoordinator[tuple[ElehantData, TranslatedNames]]
+    PassiveBluetoothProcessorCoordinator[tuple[ElehantData, ElehantNames]]
 ]
 
 

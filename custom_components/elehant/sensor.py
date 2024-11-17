@@ -26,7 +26,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import ElehantConfigEntry
 from .const import DOMAIN
-from .db_names import TranslatedNames
+from .db_names import ElehantNames
 from .elehant import ElehantData
 
 _LOGGER = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ def _values_descriptions(data: ElehantData):
 
 
 def sensor_update_to_bluetooth_data_update(
-    input: tuple[ElehantData, TranslatedNames],
+    input: tuple[ElehantData, ElehantNames],
 ) -> PassiveBluetoothDataUpdate:
     """Convert a sensor update to a Bluetooth data update."""
 
@@ -97,11 +97,9 @@ def sensor_update_to_bluetooth_data_update(
     device_info = dr.DeviceInfo(
         connections={(dr.CONNECTION_BLUETOOTH, data.address)},
         identifiers={(DOMAIN, data.unique_id)},
-        manufacturer=i18n.manufacturer,
-        model=i18n.model,
-        name=i18n.name,
         serial_number=data.str_serial,
         sw_version=data.sw_version,
+        **i18n._asdict(),
     )
 
     result = PassiveBluetoothDataUpdate(
@@ -140,7 +138,7 @@ async def async_setup_entry(
 
 class ElehantBluetoothSensorEntity(
     PassiveBluetoothProcessorEntity[
-        PassiveBluetoothDataProcessor[int | float, tuple[ElehantData, TranslatedNames]]
+        PassiveBluetoothDataProcessor[int | float, tuple[ElehantData, ElehantNames]]
     ],
     SensorEntity,
 ):
