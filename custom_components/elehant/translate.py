@@ -15,17 +15,17 @@ class ElehantI18n(NamedTuple):
 
 
 _TYPES_EN = {
-    "1": "Gas meter",
-    "2": "Water meter",
-    "3": "Electricity meter",
-    "4": "Heat meter",
+    1: "Gas meter",
+    2: "Water meter",
+    3: "Electricity meter",
+    4: "Heat meter",
 }
 
 _TYPES_RU = {
-    "1": "Счетчик газа",
-    "2": "Счетчик воды",
-    "3": "Счетчик электричества",
-    "4": "Счетчик тепла",
+    1: "Счетчик газа",
+    2: "Счетчик воды",
+    3: "Счетчик электричества",
+    4: "Счетчик тепла",
 }
 
 _MODELS_EN = {
@@ -114,12 +114,12 @@ _MODELS_RU = {
 def get_i18n(hass: HomeAssistant, dev: ElehantData) -> ElehantI18n:
     if hass.config.language == "ru":
         manufacturer = "Элехант"
-        type = _TYPES_RU[dev.key_type]
+        type = _TYPES_RU[dev.type]
         model = _MODELS_RU[dev.key_model]
 
     else:
         manufacturer = "Elehant"
-        type = _TYPES_EN[dev.key_type]
+        type = _TYPES_EN[dev.type]
         model = _MODELS_EN[dev.key_model]
 
     model = f"{type} {model}"

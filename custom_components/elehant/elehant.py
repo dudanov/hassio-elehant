@@ -95,11 +95,6 @@ class ElehantData:
         raise UnsupportedPacket("Packet version %d is not supported.", packet_version)
 
     @property
-    def key_type(self) -> str:
-        """Строковый ключ словаря типа"""
-        return f"{self.type}"
-
-    @property
     def key_model(self) -> str:
         """Строковый ключ словаря модели"""
         return f"{self.type}-{self.model}"
