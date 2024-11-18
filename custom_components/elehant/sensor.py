@@ -58,7 +58,7 @@ _COMMON_SENSORS = [
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
-        icon="mdi:send-clock",
+        icon="mdi:message-text-clock",
         key="timestamp",
         translation_key="last_report",
     ),
