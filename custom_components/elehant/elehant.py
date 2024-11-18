@@ -27,11 +27,17 @@ class ElehantData:
     """Код модели"""
     serial: int
     """Серийный номер"""
+    sw_version: str
+    """Версия прошивки"""
+    address: str
+    """Адрес"""
+    rssi: int
+    """Уровень сигнала RSSI"""
+    timestamp: dt.datetime
+    """Штамп времени"""
 
     _: dc.KW_ONLY
 
-    sw_version: str
-    """Версия прошивки"""
     battery: int
     """Уровень заряда батареи"""
     temperature: float
@@ -40,10 +46,6 @@ class ElehantData:
     """Показание 1"""
     value_2: float | None = None
     """Показание 2"""
-    address: str
-    """Адрес"""
-    rssi: int
-    """Уровень сигнала RSSI"""
 
     @classmethod
     def from_ble(cls, dev: BLEDevice, adv: AdvertisementData):
@@ -65,15 +67,15 @@ class ElehantData:
 
         sw_version, packet_version = "{}.{}".format(*divmod(x[16], 10)), x[3]
 
+        # type, model, serial, sw_version, address, rssi, timestamp
+        args = *sign, sw_version, dev.address, adv.rssi, dt.datetime.now(dt.UTC)
+
         if packet_version == 0x01:
             return cls(
-                *sign,
-                sw_version=sw_version,
+                *args,
                 battery=min(x[13], 100),
                 temperature=int.from_bytes(x[14:16], "little") / 1e2,
                 value_1=int.from_bytes(x[9:13], "little") / 1e4,
-                address=dev.address,
-                rssi=adv.rssi,
             )
 
         if packet_version == 0x05:
@@ -83,14 +85,11 @@ class ElehantData:
             v2 += int.from_bytes(x[13:16], "big")
 
             return cls(
-                *sign,
-                sw_version=sw_version,
+                *args,
                 battery=min(x[1], 100),
                 temperature=x[2],
                 value_1=v1 / 1e3,
                 value_2=v2 / 1e3,
-                address=dev.address,
-                rssi=adv.rssi,
             )
 
         raise UnsupportedPacket("Packet version %d is not supported.", packet_version)
@@ -114,8 +113,3 @@ class ElehantData:
     def unique_id(self) -> str:
         """Уникальный идентификатор"""
         return f"{self.key_model}-{self.str_serial}"
-
-    @property
-    def last_report(self) -> dt.datetime:
-        """Возвращает текущий штамп времени"""
-        return dt.datetime.now(dt.UTC)

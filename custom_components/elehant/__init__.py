@@ -12,15 +12,15 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-from .db_names import ElehantNames, get_translated_names
 from .elehant import ElehantData
+from .translate import ElehantI18n, get_i18n
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 _LOGGER = logging.getLogger(__name__)
 
 type ElehantConfigEntry = ConfigEntry[
-    PassiveBluetoothProcessorCoordinator[tuple[ElehantData, ElehantNames]]
+    PassiveBluetoothProcessorCoordinator[tuple[ElehantData, ElehantI18n]]
 ]
 
 
@@ -31,7 +31,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ElehantConfigEntry) -> b
 
     def _update(info: BluetoothServiceInfoBleak):
         data = ElehantData.from_ble(info.device, info.advertisement)
-        i18n = get_translated_names(hass, data)
+        i18n = get_i18n(hass, data)
 
         return data, i18n
 

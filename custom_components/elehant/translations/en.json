@@ -5,7 +5,7 @@
       "user": {
         "title": "Select a meter",
         "data": {
-          "unique_id": "Select meter:"
+          "address": "Select meter:"
         }
       },
       "bluetooth_confirm": {

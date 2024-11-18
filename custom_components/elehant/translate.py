@@ -5,10 +5,13 @@ from homeassistant.core import HomeAssistant
 from .elehant import ElehantData
 
 
-class ElehantNames(NamedTuple):
+class ElehantI18n(NamedTuple):
     manufacturer: str
+    """Производитель"""
     model: str
+    """Модель"""
     name: str
+    """Полное имя"""
 
 
 _TYPES_EN = {
@@ -108,7 +111,7 @@ _MODELS_RU = {
 }
 
 
-def get_translated_names(hass: HomeAssistant, dev: ElehantData):
+def get_i18n(hass: HomeAssistant, dev: ElehantData) -> ElehantI18n:
     if hass.config.language == "ru":
         manufacturer = "Элехант"
         type = _TYPES_RU[dev.key_type]
@@ -119,8 +122,7 @@ def get_translated_names(hass: HomeAssistant, dev: ElehantData):
         type = _TYPES_EN[dev.key_type]
         model = _MODELS_EN[dev.key_model]
 
-    return ElehantNames(
-        manufacturer=manufacturer,
-        model=f"{type} {model}",
-        name=f"{type} {model}-{dev.str_serial}",
-    )
+    model = f"{type} {model}"
+    name = f"{model}-{dev.str_serial}"
+
+    return ElehantI18n(manufacturer, model, name)

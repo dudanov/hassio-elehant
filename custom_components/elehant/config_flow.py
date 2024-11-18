@@ -9,12 +9,12 @@ from homeassistant.components.bluetooth import (
     BluetoothServiceInfoBleak,
     async_discovered_service_info,
 )
-from homeassistant.const import CONF_UNIQUE_ID
+from homeassistant.const import CONF_ADDRESS
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN
-from .db_names import get_translated_names
 from .elehant import ElehantData, ElehantError
+from .translate import get_i18n
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,13 +22,12 @@ _LOGGER = logging.getLogger(__name__)
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Elehant."""
 
-    _discovered_device: ElehantData | None
-    _discovered_devices: dict[str, ElehantData]
+    _device_name: str
+    _devices: dict[str, str]
 
     def __init__(self) -> None:
         """Set up a new config flow for Elehant."""
-        self._discovered_device = None
-        self._discovered_devices = {}
+        self._devices = {}
 
     async def async_step_bluetooth(self, info: BluetoothServiceInfoBleak) -> FlowResult:
         """Handle the Bluetooth discovery step."""
@@ -41,7 +40,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         await self.async_set_unique_id(info.address)
         self._abort_if_unique_id_configured()
-        self._discovered_device = device
+
+        self._device_name = get_i18n(self.hass, device).name
 
         return await self.async_step_bluetooth_confirm()
 
@@ -49,13 +49,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Confirm discovery."""
-        assert (device := self._discovered_device)
 
         if user_input is not None:
-            return self.async_create_entry(title=self._i18n.name, data={})
+            return self.async_create_entry(title=self._device_name, data={})
 
-        self._i18n = get_translated_names(self.hass, device)
-        self.context["title_placeholders"] = {"name": self._i18n.name}
+        self.context["title_placeholders"] = {"name": self._device_name}
         self._set_confirm_only()
 
         return self.async_show_form(step_id="bluetooth_confirm")
@@ -64,16 +62,15 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Handle the user step to pick discovered device."""
-        if user_input is not None:
-            unique_id = user_input[CONF_UNIQUE_ID]
-            device = self._discovered_devices[unique_id]
 
-            await self.async_set_unique_id(device.address, raise_on_progress=False)
+        if user_input is not None:
+            address = user_input[CONF_ADDRESS]
+
+            await self.async_set_unique_id(address, raise_on_progress=False)
             self._abort_if_unique_id_configured()
 
-            return self.async_create_entry(
-                title=get_translated_names(self.hass, device).name, data={}
-            )
+            name = self._devices[address]
+            return self.async_create_entry(title=name, data={})
 
         current_ids = self._async_current_ids()
 
@@ -87,21 +84,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             except ElehantError:
                 continue
 
-            self._discovered_devices[device.unique_id] = device
+            self._devices[info.address] = get_i18n(self.hass, device).name
 
-        if not self._discovered_devices:
+        if not self._devices:
             return self.async_abort(reason="no_devices_found")
 
-        return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_UNIQUE_ID): vol.In(
-                        {
-                            k: get_translated_names(self.hass, v).name
-                            for k, v in self._discovered_devices.items()
-                        }
-                    )
-                }
-            ),
-        )
+        schema = vol.Schema({vol.Required(CONF_ADDRESS): vol.In(self._devices)})
+
+        return self.async_show_form(step_id="user", data_schema=schema)
