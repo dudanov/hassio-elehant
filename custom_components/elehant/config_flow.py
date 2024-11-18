@@ -22,12 +22,8 @@ _LOGGER = logging.getLogger(__name__)
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Elehant."""
 
-    _device_name: str
+    _device: str
     _devices: dict[str, str]
-
-    def __init__(self) -> None:
-        """Set up a new config flow for Elehant."""
-        self._devices = {}
 
     async def async_step_bluetooth(self, info: BluetoothServiceInfoBleak) -> FlowResult:
         """Handle the Bluetooth discovery step."""
@@ -41,7 +37,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         await self.async_set_unique_id(info.address)
         self._abort_if_unique_id_configured()
 
-        self._device_name = get_i18n(self.hass, device).name
+        self._device = get_i18n(self.hass, device).name
 
         return await self.async_step_bluetooth_confirm()
 
@@ -51,9 +47,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Confirm discovery."""
 
         if user_input is not None:
-            return self.async_create_entry(title=self._device_name, data={})
+            return self.async_create_entry(title=self._device, data={})
 
-        self.context["title_placeholders"] = {"name": self._device_name}
+        self.context["title_placeholders"] = {"name": self._device}
         self._set_confirm_only()
 
         return self.async_show_form(step_id="bluetooth_confirm")
@@ -72,6 +68,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             name = self._devices[address]
             return self.async_create_entry(title=name, data={})
 
+        self._devices = {}
         current_ids = self._async_current_ids()
 
         for info in async_discovered_service_info(self.hass, False):

@@ -54,7 +54,7 @@ class ElehantData:
         if len(x) != 12 or not x.startswith("b0"):
             raise NotElehantDevice("Bluetooth device hasn't valid Elehant address.")
 
-        # (type, model, serial)
+        # type, model, serial
         sign = int(x[4:6], 16), int(x[2:4], 16), int(x[6:], 16)
 
         if not (x := adv.manufacturer_data.get(65535)) or len(x) != 17 or x[0] != 0x80:
