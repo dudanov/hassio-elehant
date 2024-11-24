@@ -1,4 +1,4 @@
-from typing import NamedTuple
+from typing import Mapping, NamedTuple
 
 from homeassistant.core import HomeAssistant
 
@@ -109,6 +109,15 @@ _MODELS_RU = {
     "3-1": "СЭБ",
     "4-1": "СТБ-10",
 }
+
+
+def _keys_assertion(*m: Mapping):
+    assert all(m[0].keys() == x.keys() for x in m[1:])
+
+
+# Ключи языковых словарей должны совпадать
+_keys_assertion(_TYPES_EN, _TYPES_RU)
+_keys_assertion(_MODELS_EN, _MODELS_RU)
 
 
 def get_i18n(hass: HomeAssistant, dev: ElehantData) -> ElehantI18N:
