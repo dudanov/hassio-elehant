@@ -111,8 +111,9 @@ _MODELS_RU = {
 }
 
 
-def _keys_assertion(*m: Mapping):
-    assert all(m[0].keys() == x.keys() for x in m[1:])
+def _keys_assertion(first: Mapping, *others: Mapping):
+    keys = first.keys()
+    assert all(keys == x.keys() for x in others)
 
 
 # Ключи языковых словарей должны совпадать
