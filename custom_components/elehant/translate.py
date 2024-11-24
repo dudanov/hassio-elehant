@@ -136,7 +136,7 @@ def get_i18n(hass: HomeAssistant, dev: ElehantData) -> ElehantI18N:
             model = _MODELS_EN[dev.model_key]
 
     except KeyError:
-        raise UnknownDeviceError("Unknown device %s", dev.model_key)
+        raise UnknownDeviceError("Unknown %s device", dev.model_key)
 
     model = f"{type} {model}"
     name = f"{model}-{dev.serial_number}"
