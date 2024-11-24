@@ -2,10 +2,10 @@ from typing import NamedTuple
 
 from homeassistant.core import HomeAssistant
 
-from .elehant import ElehantData
+from .elehant import DeviceNotSupportedError, ElehantData
 
 
-class ElehantI18n(NamedTuple):
+class ElehantI18N(NamedTuple):
     manufacturer: str
     """Производитель"""
     model: str
@@ -111,18 +111,24 @@ _MODELS_RU = {
 }
 
 
-def get_i18n(hass: HomeAssistant, dev: ElehantData) -> ElehantI18n:
-    if hass.config.language == "ru":
-        manufacturer = "Элехант"
-        type = f"Счетчик {_TYPES_RU[dev.type]}"
-        model = _MODELS_RU[dev.key_model]
+def get_i18n(hass: HomeAssistant, dev: ElehantData) -> ElehantI18N:
+    """Предоставляет перевод"""
 
-    else:
-        manufacturer = "Elehant"
-        type = f"{_TYPES_EN[dev.type]} meter"
-        model = _MODELS_EN[dev.key_model]
+    try:
+        if hass.config.language == "ru":
+            manufacturer = "Элехант"
+            type = f"Счетчик {_TYPES_RU[dev.type]}"
+            model = _MODELS_RU[dev.model_key]
+
+        else:
+            manufacturer = "Elehant"
+            type = f"{_TYPES_EN[dev.type]} meter"
+            model = _MODELS_EN[dev.model_key]
+
+    except KeyError:
+        raise DeviceNotSupportedError("%s device not supported.", dev.model_key)
 
     model = f"{type} {model}"
-    name = f"{model}-{dev.str_serial}"
+    name = f"{model}-{dev.serial_number}"
 
-    return ElehantI18n(manufacturer, model, name)
+    return ElehantI18N(manufacturer, model, name)

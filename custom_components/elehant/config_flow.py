@@ -9,8 +9,8 @@ from homeassistant.components.bluetooth import (
     BluetoothServiceInfoBleak,
     async_discovered_service_info,
 )
+from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.const import CONF_ADDRESS
-from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN
 from .elehant import ElehantData, ElehantError
@@ -25,11 +25,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     _device: str
     _devices: dict[str, str]
 
-    async def async_step_bluetooth(self, info: BluetoothServiceInfoBleak) -> FlowResult:
+    async def async_step_bluetooth(
+        self, info: BluetoothServiceInfoBleak
+    ) -> ConfigFlowResult:
         """Handle the Bluetooth discovery step."""
 
         try:
             device = ElehantData.from_ble(info.device, info.advertisement)
+            self._device = get_i18n(self.hass, device).name
 
         except ElehantError:
             return self.async_abort(reason="not_supported")
@@ -37,13 +40,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         await self.async_set_unique_id(info.address)
         self._abort_if_unique_id_configured()
 
-        self._device = get_i18n(self.hass, device).name
-
         return await self.async_step_bluetooth_confirm()
 
     async def async_step_bluetooth_confirm(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Confirm discovery."""
 
         if user_input is not None:
@@ -56,7 +57,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the user step to pick discovered device."""
 
         if user_input is not None:
@@ -77,11 +78,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             try:
                 device = ElehantData.from_ble(info.device, info.advertisement)
+                self._devices[info.address] = get_i18n(self.hass, device).name
 
             except ElehantError:
                 continue
-
-            self._devices[info.address] = get_i18n(self.hass, device).name
 
         if not self._devices:
             return self.async_abort(reason="no_devices_found")

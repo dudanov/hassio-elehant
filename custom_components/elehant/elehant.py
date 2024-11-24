@@ -9,11 +9,15 @@ class ElehantError(Exception):
     pass
 
 
-class NotElehantDevice(ElehantError):
+class NotElehantDeviceError(ElehantError):
     pass
 
 
-class UnsupportedPacket(ElehantError):
+class PacketNotSupportedError(ElehantError):
+    pass
+
+
+class DeviceNotSupportedError(ElehantError):
     pass
 
 
@@ -23,9 +27,9 @@ class ElehantData:
 
     type: int
     """Код типа"""
-    model: int
+    kind: int
     """Код модели"""
-    serial: int
+    number: int
     """Серийный номер"""
     sw_version: str
     """Версия прошивки"""
@@ -52,16 +56,20 @@ class ElehantData:
         x = dev.address.replace(":", "").lower()
 
         if len(x) != 12 or not x.startswith("b0"):
-            raise NotElehantDevice("Bluetooth device hasn't valid Elehant address.")
+            raise NotElehantDeviceError(
+                "Bluetooth device hasn't valid Elehant address."
+            )
 
         # type, model, serial
         sign = int(x[4:6], 16), int(x[2:4], 16), int(x[6:], 16)
 
         if not (x := adv.manufacturer_data.get(65535)) or len(x) != 17 or x[0] != 0x80:
-            raise NotElehantDevice("Advertisement data hasn't valid manufacturer data.")
+            raise NotElehantDeviceError(
+                "Advertisement data hasn't valid manufacturer data."
+            )
 
         if sign != (x[4], x[5], int.from_bytes(x[6:9], "little")):
-            raise NotElehantDevice(
+            raise NotElehantDeviceError(
                 "Device signatures in address and adverisement data aren't equals."
             )
 
@@ -92,19 +100,21 @@ class ElehantData:
                 value_2=v2 / 1e3,
             )
 
-        raise UnsupportedPacket("Packet version %d is not supported.", packet_version)
+        raise PacketNotSupportedError(
+            "Packet version %d not supported.", packet_version
+        )
 
     @property
-    def key_model(self) -> str:
+    def model_key(self) -> str:
         """Строковый ключ словаря модели"""
-        return f"{self.type}-{self.model}"
+        return f"{self.type}-{self.kind}"
 
     @property
-    def str_serial(self) -> str:
+    def serial_number(self) -> str:
         """Серийный номер в виде строки"""
-        return f"{self.serial:07}"
+        return f"{self.number:07}"
 
     @property
     def unique_id(self) -> str:
         """Уникальный идентификатор"""
-        return f"{self.key_model}-{self.str_serial}"
+        return f"{self.model_key}-{self.serial_number}"

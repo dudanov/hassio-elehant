@@ -11,16 +11,17 @@ from homeassistant.components.bluetooth.passive_update_processor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 
-from .elehant import ElehantData
-from .translate import ElehantI18n, get_i18n
+from .elehant import ElehantData, ElehantError
+from .translate import ElehantI18N, get_i18n
 
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 _LOGGER = logging.getLogger(__name__)
 
 type ElehantConfigEntry = ConfigEntry[
-    PassiveBluetoothProcessorCoordinator[tuple[ElehantData, ElehantI18n]]
+    PassiveBluetoothProcessorCoordinator[tuple[ElehantData, ElehantI18N]]
 ]
 
 
@@ -30,8 +31,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ElehantConfigEntry) -> b
     assert (address := entry.unique_id)
 
     def _update(info: BluetoothServiceInfoBleak):
-        data = ElehantData.from_ble(info.device, info.advertisement)
-        i18n = get_i18n(hass, data)
+        try:
+            data = ElehantData.from_ble(info.device, info.advertisement)
+            i18n = get_i18n(hass, data)
+
+        except ElehantError as exc:
+            # Этого исключения быть не должно, так как счетчик проходил валидацию
+            # на стадии визарда `ConfigFlow`. Все равно должен быть обработчик
+            # на случай ошибки ПО счетчика.
+            raise HomeAssistantError("Unexpected error") from exc
 
         return data, i18n
 
@@ -49,7 +57,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ElehantConfigEntry) -> b
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: ElehantConfigEntry) -> bool:
     """Unload a config entry."""
 
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
