@@ -100,7 +100,7 @@ class ElehantData:
                 value_2=v2 / 1e3,
             )
 
-        raise UnknownPacketError("Unknown packet v%d", packet_version)
+        raise UnknownPacketError("Unknown v%d packet", packet_version)
 
     @property
     def model_key(self) -> str:
