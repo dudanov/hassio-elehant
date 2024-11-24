@@ -2,7 +2,7 @@ from typing import NamedTuple
 
 from homeassistant.core import HomeAssistant
 
-from .elehant import DeviceNotSupportedError, ElehantData
+from .elehant import ElehantData, UnknownDeviceError
 
 
 class ElehantI18N(NamedTuple):
@@ -126,7 +126,7 @@ def get_i18n(hass: HomeAssistant, dev: ElehantData) -> ElehantI18N:
             model = _MODELS_EN[dev.model_key]
 
     except KeyError:
-        raise DeviceNotSupportedError("%s device not supported.", dev.model_key)
+        raise UnknownDeviceError("Unknown device %s", dev.model_key)
 
     model = f"{type} {model}"
     name = f"{model}-{dev.serial_number}"

@@ -13,11 +13,11 @@ class NotElehantDeviceError(ElehantError):
     pass
 
 
-class PacketNotSupportedError(ElehantError):
+class UnknownPacketError(ElehantError):
     pass
 
 
-class DeviceNotSupportedError(ElehantError):
+class UnknownDeviceError(ElehantError):
     pass
 
 
@@ -100,9 +100,7 @@ class ElehantData:
                 value_2=v2 / 1e3,
             )
 
-        raise PacketNotSupportedError(
-            "Packet version %d not supported.", packet_version
-        )
+        raise UnknownPacketError("Unknown packet v%d", packet_version)
 
     @property
     def model_key(self) -> str:
