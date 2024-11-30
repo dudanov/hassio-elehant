@@ -21,17 +21,15 @@ from homeassistant.const import (
     UnitOfVolume,
 )
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import ElehantConfigEntry
-from .const import DOMAIN
 from .elehant import ElehantData
-from .translate import ElehantI18N
 
 _LOGGER = logging.getLogger(__name__)
 
-_COMMON_SENSORS = [
+_COMMON_SENSORS = (
     SensorEntityDescription(
         device_class=SensorDeviceClass.TEMPERATURE,
         key="temperature",
@@ -62,68 +60,55 @@ _COMMON_SENSORS = [
         key="timestamp",
         translation_key="last_report",
     ),
-]
+)
 
 
 def _values_descriptions(data: ElehantData):
-    _class, unit = SensorDeviceClass.ENERGY, UnitOfVolume.CUBIC_METERS
+    cls, unit = SensorDeviceClass.ENERGY, UnitOfVolume.CUBIC_METERS
 
     match data.type:
         case 1:
-            _class = SensorDeviceClass.GAS
+            cls = SensorDeviceClass.GAS
         case 2:
-            _class = SensorDeviceClass.WATER
+            cls = SensorDeviceClass.WATER
         case 3:
             unit = UnitOfEnergy.KILO_WATT_HOUR
         case 4:
             unit = UnitOfEnergy.GIGA_CALORIE
 
-    _VALUE_SENSOR = SensorEntityDescription(
+    _SENSOR = SensorEntityDescription(
         key="value_1",
-        device_class=_class,
+        device_class=cls,
         native_unit_of_measurement=unit,
         state_class=SensorStateClass.TOTAL,
     )
 
-    result = [_VALUE_SENSOR]
+    sensors = [_SENSOR]
 
     if data.value_2 is not None:
-        result.append(dc.replace(_VALUE_SENSOR, key="value_2"))
+        sensors.append(dc.replace(_SENSOR, key="value_2"))
 
-    return result
+    return tuple(sensors)
 
 
 def sensor_update_to_bluetooth_data_update(
-    input: tuple[ElehantData, ElehantI18N],
+    input: tuple[ElehantData, DeviceInfo],
 ) -> PassiveBluetoothDataUpdate:
     """Convert a sensor update to a Bluetooth data update."""
 
-    data, i18n = input
-    _value_sensors = _values_descriptions(data)
+    data, device_info = input
+    _VALUES_SENSORS = _values_descriptions(data)
 
     def _it():
-        return it.chain(_COMMON_SENSORS, _value_sensors)
+        return it.chain(_COMMON_SENSORS, _VALUES_SENSORS)
 
-    device_info = dr.DeviceInfo(
-        connections={(dr.CONNECTION_BLUETOOTH, data.address)},
-        identifiers={(DOMAIN, data.unique_id)},
-        serial_number=data.serial_number,
-        sw_version=data.sw_version,
-        **i18n._asdict(),
-    )
-
-    result = PassiveBluetoothDataUpdate(
-        devices={data.address: device_info},
-        entity_descriptions={
-            PassiveBluetoothEntityKey(x.key, data.address): x for x in _it()
-        },
+    return PassiveBluetoothDataUpdate(
+        devices={None: device_info},
+        entity_descriptions={PassiveBluetoothEntityKey(x.key, None): x for x in _it()},
         entity_data={
-            PassiveBluetoothEntityKey(x.key, data.address): getattr(data, x.key)
-            for x in _it()
+            PassiveBluetoothEntityKey(x.key, None): getattr(data, x.key) for x in _it()
         },
     )
-
-    return result
 
 
 async def async_setup_entry(
@@ -148,7 +133,7 @@ async def async_setup_entry(
 
 class ElehantBluetoothSensorEntity(
     PassiveBluetoothProcessorEntity[
-        PassiveBluetoothDataProcessor[int | float, tuple[ElehantData, ElehantI18N]]
+        PassiveBluetoothDataProcessor[int | float, tuple[ElehantData, DeviceInfo]]
     ],
     SensorEntity,
 ):

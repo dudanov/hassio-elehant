@@ -33,8 +33,6 @@ class ElehantData:
     """Серийный номер"""
     sw_version: str
     """Версия прошивки"""
-    address: str
-    """Адрес"""
     rssi: int
     """Уровень сигнала RSSI"""
     timestamp: dt.datetime
@@ -60,7 +58,7 @@ class ElehantData:
                 "Bluetooth device hasn't valid Elehant address."
             )
 
-        # type, model, serial
+        # type, kind, number
         sign = int(x[4:6], 16), int(x[2:4], 16), int(x[6:], 16)
 
         if not (x := adv.manufacturer_data.get(65535)) or len(x) != 17 or x[0] != 0x80:
@@ -75,8 +73,8 @@ class ElehantData:
 
         sw_version, packet_version = "{}.{}".format(*divmod(x[16], 10)), x[3]
 
-        # type, model, serial, sw_version, address, rssi, timestamp
-        args = *sign, sw_version, dev.address, adv.rssi, dt.datetime.now(dt.UTC)
+        # type, kind, number, sw_version, rssi, timestamp
+        args = *sign, sw_version, adv.rssi, dt.datetime.now(dt.UTC)
 
         if packet_version == 0x01:
             return cls(
