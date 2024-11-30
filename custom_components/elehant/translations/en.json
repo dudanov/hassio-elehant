@@ -22,6 +22,24 @@
   },
   "entity": {
     "sensor": {
+      "energy": {
+        "name": "Energy{end}"
+      },
+      "gas": {
+        "name": "Gas{end}"
+      },
+      "water": {
+        "name": "Water{end}"
+      },
+      "temperature": {
+        "name": "Temperature"
+      },
+      "battery": {
+        "name": "Battery"
+      },
+      "rssi": {
+        "name": "Signal strength"
+      },
       "last_report": {
         "name": "Last report"
       }

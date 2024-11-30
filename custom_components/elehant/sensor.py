@@ -34,6 +34,7 @@ _COMMON_SENSORS = (
         key="temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
+        translation_key="temperature",
     ),
     SensorEntityDescription(
         device_class=SensorDeviceClass.BATTERY,
@@ -42,6 +43,7 @@ _COMMON_SENSORS = (
         key="battery",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
+        translation_key="battery",
     ),
     SensorEntityDescription(
         device_class=SensorDeviceClass.SIGNAL_STRENGTH,
@@ -50,6 +52,7 @@ _COMMON_SENSORS = (
         key="rssi",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         state_class=SensorStateClass.MEASUREMENT,
+        translation_key="rssi",
     ),
     SensorEntityDescription(
         device_class=SensorDeviceClass.TIMESTAMP,
@@ -80,14 +83,17 @@ def _values_descriptions(data: ElehantData):
         device_class=cls,
         native_unit_of_measurement=unit,
         state_class=SensorStateClass.TOTAL,
+        translation_key=cls,
+        translation_placeholders={"end": ""},
     )
 
-    sensors = [_SENSOR]
+    if data.value_2 is None:
+        return (_SENSOR,)
 
-    if data.value_2 is not None:
-        sensors.append(dc.replace(_SENSOR, key="value_2"))
-
-    return tuple(sensors)
+    return (
+        dc.replace(_SENSOR, translation_placeholders={"end": " 1"}),
+        dc.replace(_SENSOR, key="value_2", translation_placeholders={"end": " 2"}),
+    )
 
 
 def sensor_update_to_bluetooth_data_update(

@@ -22,6 +22,24 @@
   },
   "entity": {
     "sensor": {
+      "energy": {
+        "name": "Энергия{end}"
+      },
+      "gas": {
+        "name": "Газ{end}"
+      },
+      "water": {
+        "name": "Вода{end}"
+      },
+      "temperature": {
+        "name": "Температура"
+      },
+      "battery": {
+        "name": "Батарея"
+      },
+      "rssi": {
+        "name": "Уровень сигнала"
+      },
       "last_report": {
         "name": "Обновлено"
       }
