@@ -56,7 +56,7 @@ _COMMON_SENSORS = (
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
-        icon="mdi:clock-outline",
+        icon="mdi:invoice-clock-outline",
         key="timestamp",
         translation_key="last_report",
     ),
