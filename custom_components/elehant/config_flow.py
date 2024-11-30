@@ -4,12 +4,11 @@ import logging
 from typing import Any
 
 import voluptuous as vol
-from homeassistant import config_entries
 from homeassistant.components.bluetooth import (
     BluetoothServiceInfoBleak,
     async_discovered_service_info,
 )
-from homeassistant.config_entries import ConfigFlowResult
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_ADDRESS
 
 from .const import DOMAIN
@@ -19,7 +18,7 @@ from .translate import get_i18n
 _LOGGER = logging.getLogger(__name__)
 
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class ElehantConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Elehant."""
 
     _device: str
