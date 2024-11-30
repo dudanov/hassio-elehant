@@ -161,7 +161,7 @@ class ElehantBluetoothSensorEntity(
 
         assert (value := self.native_value) is not None
 
-        if self.entity_key.key == "rssi":
+        if (key := self.entity_key.key) == "rssi":
             if value < -85:
                 value = 1
 
@@ -173,7 +173,7 @@ class ElehantBluetoothSensorEntity(
 
             return f"mdi:signal-cellular-{value}"
 
-        if self.entity_key.key == "battery":
+        if key == "battery":
             if value >= 50:
                 value = "high"
 
