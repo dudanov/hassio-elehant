@@ -39,7 +39,6 @@ _COMMON_SENSORS = (
     SensorEntityDescription(
         device_class=SensorDeviceClass.BATTERY,
         entity_category=EntityCategory.DIAGNOSTIC,
-        icon="mdi:battery-bluetooth-variant",
         key="battery",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -48,7 +47,6 @@ _COMMON_SENSORS = (
     SensorEntityDescription(
         device_class=SensorDeviceClass.SIGNAL_STRENGTH,
         entity_category=EntityCategory.DIAGNOSTIC,
-        icon="mdi:bluetooth",
         key="rssi",
         native_unit_of_measurement=SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -58,7 +56,7 @@ _COMMON_SENSORS = (
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
-        icon="mdi:bluetooth-audio",
+        icon="mdi:clock-outline",
         key="timestamp",
         translation_key="last_report",
     ),
@@ -156,3 +154,23 @@ class ElehantBluetoothSensorEntity(
         """Return the native value."""
 
         return self.processor.entity_data.get(self.entity_key)
+
+    @property
+    def icon(self) -> str | None:
+        """Return the icon to use in the frontend, if any."""
+
+        if self.entity_key.key == "rssi":
+            assert (rssi := self.native_value)
+
+            if rssi < -85:
+                rssi = 1
+
+            elif rssi < -60:
+                rssi = 2
+
+            else:
+                rssi = 3
+
+            return f"mdi:signal-cellular-{rssi}"
+
+        return super().icon
