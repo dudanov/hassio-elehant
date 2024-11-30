@@ -12,9 +12,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.device_registry import CONNECTION_BLUETOOTH, DeviceInfo
+from homeassistant.helpers.device_registry import DeviceInfo
 
-from .const import DOMAIN
 from .elehant import ElehantData, ElehantError
 from .translate import get_i18n
 
@@ -44,15 +43,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ElehantConfigEntry) -> b
             # на случай ошибки ПО счетчика.
             raise HomeAssistantError("Unexpected error") from exc
 
-        device_info = DeviceInfo(
-            connections={(CONNECTION_BLUETOOTH, address)},
-            identifiers={(DOMAIN, data.unique_id)},
+        return data, DeviceInfo(
             serial_number=data.serial_number,
             sw_version=data.sw_version,
             **i18n._asdict(),
         )
-
-        return data, device_info
 
     entry.runtime_data = PassiveBluetoothProcessorCoordinator(
         hass,
