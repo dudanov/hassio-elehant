@@ -159,18 +159,30 @@ class ElehantBluetoothSensorEntity(
     def icon(self) -> str | None:
         """Return the icon to use in the frontend, if any."""
 
+        assert (value := self.native_value) is not None
+
         if self.entity_key.key == "rssi":
-            assert (rssi := self.native_value)
+            if value < -85:
+                value = 1
 
-            if rssi < -85:
-                rssi = 1
-
-            elif rssi < -60:
-                rssi = 2
+            elif value < -60:
+                value = 2
 
             else:
-                rssi = 3
+                value = 3
 
-            return f"mdi:signal-cellular-{rssi}"
+            return f"mdi:signal-cellular-{value}"
+
+        if self.entity_key.key == "battery":
+            if value >= 50:
+                value = "high"
+
+            elif value >= 20:
+                value = "medium"
+
+            else:
+                value = "low"
+
+            return f"mdi:battery-{value}"
 
         return super().icon
