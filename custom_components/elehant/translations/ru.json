@@ -40,7 +40,7 @@
       "rssi": {
         "name": "Уровень сигнала"
       },
-      "last_report": {
+      "timestamp": {
         "name": "Обновление"
       }
     }

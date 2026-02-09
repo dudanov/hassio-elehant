@@ -56,9 +56,8 @@ _COMMON_SENSORS = (
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
         entity_registry_enabled_default=False,
-        icon="mdi:invoice-clock-outline",
         key="timestamp",
-        translation_key="last_report",
+        translation_key="timestamp",
     ),
 )
 
@@ -154,35 +153,3 @@ class ElehantBluetoothSensorEntity(
         """Return the native value."""
 
         return self.processor.entity_data.get(self.entity_key)
-
-    @property
-    def icon(self) -> str | None:
-        """Return the icon to use in the frontend, if any."""
-
-        assert (value := self.native_value) is not None
-
-        if (key := self.entity_key.key) == "rssi":
-            if value < -85:
-                value = 1
-
-            elif value < -60:
-                value = 2
-
-            else:
-                value = 3
-
-            return f"mdi:signal-cellular-{value}"
-
-        if key == "battery":
-            if value >= 50:
-                value = "high"
-
-            elif value >= 20:
-                value = "medium"
-
-            else:
-                value = "low"
-
-            return f"mdi:battery-{value}"
-
-        return super().icon

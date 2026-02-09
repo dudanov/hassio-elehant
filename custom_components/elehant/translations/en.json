@@ -40,7 +40,7 @@
       "rssi": {
         "name": "Signal strength"
       },
-      "last_report": {
+      "timestamp": {
         "name": "Last report"
       }
     }
